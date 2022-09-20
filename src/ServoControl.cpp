@@ -1,13 +1,11 @@
 #include "ServoControl.h"
 
-namespace SERVO {
-int num_count = 0;
-}  // namespace SERVO
+static int num_count = 0;
 
 ServoControl::ServoControl(bool isReverse) {
     this->isReverse = isReverse;
     CurrentAngle = offset = 0;
-    num = SERVO::num_count++;
+    num = num_count++;
 }
 
 void ServoControl::Initialize(int ServoPin) {
@@ -20,6 +18,12 @@ void ServoControl::SetAngle(int Angle) {
     switch (num) {
         case 0:
             servo.write(((Angle - offset) / 90.0) * 105.0);
+            break;
+        case 1:
+            // servo.write(((Angle - offset) / 90.0) * 105.0);
+            break;
+        case 2:
+            // servo.write(((Angle - offset) / 90.0) * 105.0);
             break;
 
         default:

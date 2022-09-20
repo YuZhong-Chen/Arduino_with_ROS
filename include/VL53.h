@@ -3,11 +3,8 @@
 
 #include <VL53L0X.h>
 
+#include "Constant.h"
 #include "KalmanFilter.h"
-
-#define VL53_NUM 1
-#define VL53_SHUTDOWN_PIN_START 5
-#define MEASUREMENT_MAX 1000
 
 class VL53 {
    public:
@@ -16,18 +13,24 @@ class VL53 {
     void UpdateDistance();
     int GetDistance();
     int GetDistanceFiltered();
+    int GetDistancePre();
+    int GetDistanceFilteredPre();
 
     friend void VL53_INIT();
 
    private:
     VL53L0X sensor;
     KalmanFilter kf{2, 2, 0.02};
+
     int distance;
     int distance_filtered;
+
+    int distance_pre;
+    int distance_filtered_pre;
 };
 
 void VL53_INIT();
 
-extern VL53 vl53_sensors[VL53_NUM];
+extern VL53 vl53_sensors[LIDAR_NUM];
 
 #endif
