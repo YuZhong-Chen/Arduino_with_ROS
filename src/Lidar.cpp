@@ -19,6 +19,10 @@ void LIDAR::Initialize(int ServoPin) {
     }
 }
 
+int LIDAR::GetDistance() {
+    return distance;
+}
+
 void LidarMeasurement() {
     for (int i = 0; i < LIDAR_NUM; i++) {
         lidar[i].distance = 0;
@@ -65,4 +69,24 @@ void LidarMeasurement() {
         }
         Serial.println();
     }
+}
+
+// TODO : Use all data to predict the average car info.
+//        For now, I only use the front two lidars.
+LIDAR_MEASUREMENT CalulateDistance(int mea_left1, int mea_left2, int mea_right1, int mea_right2) {
+    LIDAR_MEASUREMENT an;
+
+    an.Omega = acos(TRACK_WIDTH / (mea_left1 + mea_right1 + CAR_WIDTH));
+
+    an.y = ((mea_right1 - mea_left1) * cos(an.Omega) + TRACK_WIDTH) / 2.0;
+
+    if (mea_left1 >= mea_left2) {
+        an.y += (CAR_LENGTH / 2) * sin(an.Omega);
+        an.Omega = an.Omega * (180.0 / PI);
+    } else {
+        an.y -= (CAR_LENGTH / 2) * sin(an.Omega);
+        an.Omega = (-1) * an.Omega * (180.0 / PI);
+    }
+
+    return an;
 }

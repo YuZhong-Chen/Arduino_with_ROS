@@ -11,6 +11,7 @@
 #define VL53_MEASUREMENT_MAX 1000
 
 #define CAR_WIDTH 30.0
+#define CAR_LENGTH 30.0
 #define TRACK_WIDTH 100.0
 
 #endif
