@@ -9,16 +9,21 @@ class LIDAR {
    public:
     LIDAR();
     void Initialize(int ServoPin);
-    int GetDistance();
+
+    ServoControl servo{false};
+    int Distance;
+    int Distance_diff;
+
+    int CharacteristicPoint[2];
+
+    int Answer_Predict;
+    void SearchLidarTable();
 
     friend void LidarMeasurement();
 
    private:
     int num;
-
-    ServoControl servo{false};
-
-    int distance;
+    int max_Distance_diff;
 };
 
 typedef struct {
