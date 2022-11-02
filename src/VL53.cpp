@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-VL53 vl53_sensors[LIDAR_NUM];
+VL53 vl53_sensors[VL53_num];
 
 VL53::VL53() {
     distance = distance_filtered = distance_pre = distance_filtered_pre = 0;
@@ -20,14 +20,18 @@ void VL53::UpdateDistance() {
 }
 
 bool VL53_INIT() {
-    for (int i = 0; i < LIDAR_NUM; i++) {
-        pinMode(VL53_SHUTDOWN_PIN_START + i, OUTPUT);
-        digitalWrite(VL53_SHUTDOWN_PIN_START + i, LOW);
+    // TODO  Remember to modify the pin.
+    // (According to the Physic connection.)
+    int Shutdown_Pin[6] = {5, 6, 7, 8, 9, 10};
+
+    for (int i = 0; i < VL53_num; i++) {
+        pinMode(Shutdown_Pin[i], OUTPUT);
+        digitalWrite(Shutdown_Pin[i], LOW);
     }
     delay(500);
 
-    for (int i = 0; i < LIDAR_NUM; i++) {
-        digitalWrite(VL53_SHUTDOWN_PIN_START + i, HIGH);
+    for (int i = 0; i < VL53_num; i++) {
+        digitalWrite(Shutdown_Pin[i], HIGH);
         delay(150);
         if (!vl53_sensors[i].sensor.init(true)) {
             return false;
@@ -36,7 +40,7 @@ bool VL53_INIT() {
         vl53_sensors[i].sensor.setAddress((uint8_t)(i + 1));
     }
 
-    for (int i = 0; i < LIDAR_NUM; i++) {
+    for (int i = 0; i < VL53_num; i++) {
         vl53_sensors[i].sensor.startContinuous();
     }
 

@@ -24,6 +24,7 @@ class LIDAR {
    private:
     int num;
     int max_Distance_diff;
+    int State;
 };
 
 typedef struct {

@@ -1,5 +1,6 @@
 #include <Arduino.h>
 
+#include "CarFront.h"
 #include "Lidar.h"
 #include "ROS_node.h"
 
@@ -28,13 +29,19 @@ void setup() {
 void loop() {
     // LidarMeasurement();
 
-    for (int i = 0; i < LIDAR_NUM; i++) {
+    /* Get the FrontDistance. */
+    // CarFrontSensor.UpdateDistance();
+    // CarFrontSensor.PublishData();
+
+    for (int i = 0; i < VL53_num; i++) {
         vl53_sensors[i].UpdateDistance();
-        Serial.print(vl53_sensors[i].GetDistance());
+        Serial.print(vl53_sensors[i].distance);
         Serial.print(" ");
     }
     Serial.println("");
 
+    /* For Lidar data Debug */
+    /* This should test on RPI first ? */
     // Car_Info = CalulateDistance(lidar[0].GetDistance(), lidar[1].GetDistance(), lidar[2].GetDistance(), 0);
     // Serial.println("Car Info (lidar calculate) : ");
     // Serial.print("Omega : ");

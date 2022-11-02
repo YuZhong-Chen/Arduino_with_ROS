@@ -27,6 +27,15 @@ class VL53 {
 
 bool VL53_INIT();
 
-extern VL53 vl53_sensors[LIDAR_NUM];
+/**
+ *  ID  Use
+ *  0   Front left   (Lidar)
+ *  1   Back left    (lidar)
+ *  2   Front right  (lidar)
+ *  3   Back right   (lidar)
+ *  4   Front left   (FrontDetect)
+ *  5   Front right  (FrontDetect)
+ */
+extern VL53 vl53_sensors[VL53_num];
 
 #endif
