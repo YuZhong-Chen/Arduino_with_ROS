@@ -19,22 +19,7 @@ void VL53::UpdateDistance() {
     distance_filtered = (int)kf.updateEstimate((double)distance);
 }
 
-int VL53::GetDistance() {
-    return distance;
-}
-
-int VL53::GetDistanceFiltered() {
-    return distance_filtered;
-}
-
-int VL53::GetDistancePre() {
-    return distance_pre;
-}
-int VL53::GetDistanceFilteredPre() {
-    return distance_filtered_pre;
-}
-
-void VL53_INIT() {
+bool VL53_INIT() {
     for (int i = 0; i < LIDAR_NUM; i++) {
         pinMode(VL53_SHUTDOWN_PIN_START + i, OUTPUT);
         digitalWrite(VL53_SHUTDOWN_PIN_START + i, LOW);
@@ -44,7 +29,9 @@ void VL53_INIT() {
     for (int i = 0; i < LIDAR_NUM; i++) {
         digitalWrite(VL53_SHUTDOWN_PIN_START + i, HIGH);
         delay(150);
-        vl53_sensors[i].sensor.init(true);
+        if (!vl53_sensors[i].sensor.init(true)) {
+            return false;
+        }
         delay(100);
         vl53_sensors[i].sensor.setAddress((uint8_t)(i + 1));
     }
@@ -52,4 +39,6 @@ void VL53_INIT() {
     for (int i = 0; i < LIDAR_NUM; i++) {
         vl53_sensors[i].sensor.startContinuous();
     }
+
+    return true;
 }

@@ -17,18 +17,13 @@ void ServoControl::Initialize(int ServoPin) {
 void ServoControl::SetAngle(int Angle) {
     switch (num) {
         case 0:
-            servo.write(((Angle - offset) / 90.0) * 105.0);
-            // servo.write(Angle);
+            // servo.write(((Angle - offset) / 90.0) * 105.0);
+            servo.write(Angle);
             break;
         case 1:
             // servo.write((((180 - Angle - 5)) / 90.0) * 85.0);
             servo.write(Angle);
             break;
-        case 2:
-            // servo.write((180 - Angle) - 17);
-            servo.write(Angle);
-            break;
-
         default:
             break;
     }

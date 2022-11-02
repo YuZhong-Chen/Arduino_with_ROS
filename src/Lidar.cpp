@@ -1,6 +1,7 @@
 #include "Lidar.h"
 
 #include <Arduino.h>
+#include <math.h>
 
 static int num_count = 0;
 
@@ -38,7 +39,7 @@ void LidarMeasurement() {
             for (int num = 0; num < LIDAR_NUM; num++) {
                 vl53_sensors[num].UpdateDistance();
 
-                lidar[num].Distance_diff = abs(vl53_sensors[num].GetDistanceFiltered() - vl53_sensors[num].GetDistanceFilteredPre());
+                lidar[num].Distance_diff = abs(vl53_sensors[num].distance_filtered - vl53_sensors[num].distance_filtered_pre);
 
                 if (lidar[num].Distance_diff > lidar[num].max_Distance_diff) {
                     lidar[num].max_Distance_diff = lidar[num].Distance_diff;
@@ -77,7 +78,7 @@ void LidarMeasurement() {
             for (int num = 0; num < LIDAR_NUM; num++) {
                 vl53_sensors[num].UpdateDistance();
 
-                lidar[num].Distance_diff = abs(vl53_sensors[num].GetDistanceFiltered() - vl53_sensors[num].GetDistanceFilteredPre());
+                lidar[num].Distance_diff = abs(vl53_sensors[num].distance_filtered - vl53_sensors[num].distance_filtered_pre);
 
                 if (lidar[num].Distance_diff > lidar[num].max_Distance_diff) {
                     lidar[num].max_Distance_diff = lidar[num].Distance_diff;
