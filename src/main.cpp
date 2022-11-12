@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include "CarFront.h"
+#include "FlowSensor.h"
 #include "Lidar.h"
 #include "ROS_node.h"
 
@@ -9,47 +10,38 @@ LIDAR_MEASUREMENT Car_Info;
 void setup() {
     Wire.begin();
     Serial.begin(57600);
-    delay(400);
 
     // Init the ros node
     ROS_NODE::setup();
 
-    // Init the VL53 sensors, it will hang at here if fail to init sensors.
-    if (!VL53_INIT()) {
-        Serial.println("Fail to Init VL53 sensors.");
-        while (1) {
-        }
-    }
+    // Init the VL53 sensor.
+    VL53::Initialize();
 
-    // lidar[0].Initialize(9);
+    // TODO Remember to modify the pin. //46
+    Lidar_Left.Initialize(45, false, 0, 1);
+
+    // Init the FlowSensor.
+    FlowSensor.Initialize();
 
     delay(400);
 }
 
 void loop() {
-    // LidarMeasurement();
-
     /* Get the FrontDistance. */
-    // CarFrontSensor.UpdateDistance();
-    // CarFrontSensor.PublishData();
+    CarFrontSensor.UpdateDistance();
+    CarFrontSensor.PublishData();
 
-    for (int i = 0; i < VL53_num; i++) {
-        vl53_sensors[i].UpdateDistance();
-        Serial.print(vl53_sensors[i].distance);
-        Serial.print(" ");
-    }
-    Serial.println("");
+    // for (int i = 0; i < VL53_NUM; i++) {
+    //     vl53_sensors[i].UpdateDistance();
+    //     Serial.print(vl53_sensors[i].distance);
+    //     Serial.print(" ");
+    // }
+    // Serial.println("");
 
-    /* For Lidar data Debug */
-    /* This should test on RPI first ? */
-    // Car_Info = CalulateDistance(lidar[0].GetDistance(), lidar[1].GetDistance(), lidar[2].GetDistance(), 0);
-    // Serial.println("Car Info (lidar calculate) : ");
-    // Serial.print("Omega : ");
-    // Serial.println(Car_Info.Omega);
-    // Serial.print("Y : ");
-    // Serial.println(Car_Info.y);
+    FlowSensor.UpdateData();
+    FlowSensor.PublishData_Position();
+    FlowSensor.PublishData_Velocity();
 
-    // ROS_NODE::Publish_RobotArmControl_Vel(DabbleGamePad.Data);
-    // ROS_NODE::SpinOnce();
+    ROS_NODE::SpinOnce();
     // delay(10);
 }

@@ -2,14 +2,14 @@
 
 static int num_count = 0;
 
-ServoControl::ServoControl(bool isReverse) {
-    this->isReverse = isReverse;
+ServoControl::ServoControl() {
     CurrentAngle = offset = 0;
     num = num_count++;
 }
 
-void ServoControl::Initialize(int ServoPin) {
+void ServoControl::Initialize(int ServoPin, bool isReverse) {
     servo.attach(ServoPin);
+    this->isReverse = isReverse;
     servo.write(CurrentAngle);
 }
 

@@ -8,22 +8,36 @@
 class LIDAR {
    public:
     LIDAR();
-    void Initialize(int ServoPin);
+    void Initialize(int ServoPin, bool isReverse, int VL53_ID_Front, int VL53_ID_Back);
 
-    ServoControl servo{false};
-    int Distance;
-    int Distance_diff;
+    ServoControl servo;
+    int Distance_Front;
+    int Distance_diff_Front;
 
-    int CharacteristicPoint[2];
+    int Distance_Back;
+    int Distance_diff_Back;
 
-    int Answer_Predict;
+    int CharacteristicPoint_Front[2];
+    int CharacteristicPoint_Back[2];
+
+    int Answer_Predict_Front;
+    int Answer_Predict_Back;
     void SearchLidarTable();
+    void SetState(int State);
 
-    friend void LidarMeasurement();
+    void Update();
 
    private:
     int num;
-    int max_Distance_diff;
+
+    int VL53_ID_Front;
+    int VL53_ID_Back;
+
+    int CurrentAngle;
+
+    int max_Distance_diff_Front;
+    int max_Distance_diff_Back;
+
     int State;
 };
 
@@ -32,9 +46,9 @@ typedef struct {
     double Omega = 0;
 } LIDAR_MEASUREMENT;
 
-void LidarMeasurement();
 LIDAR_MEASUREMENT CalulateDistance(int mea_left1, int mea_left2, int mea_right1, int mea_right2);
 
-extern LIDAR lidar[LIDAR_NUM];
+extern LIDAR Lidar_Left;
+// extern LIDAR Lidar_Right;
 
 #endif

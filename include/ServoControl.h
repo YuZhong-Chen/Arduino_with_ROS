@@ -5,10 +5,10 @@
 
 class ServoControl {
    public:
-    ServoControl(bool isReverse);
+    ServoControl();
 
     // Initialize the Servo
-    void Initialize(int ServoPin);
+    void Initialize(int ServoPin, bool isReverse);
 
     // Set the Angle and Run.
     void SetAngle(int Angle);

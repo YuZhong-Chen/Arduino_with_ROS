@@ -5,110 +5,87 @@
 
 static int num_count = 0;
 
-LIDAR lidar[LIDAR_NUM];
+LIDAR Lidar_Left;
+// LIDAR Lidar_Right;
 
 LIDAR::LIDAR() {
     num = num_count++;
 }
 
-void LIDAR::Initialize(int ServoPin) {
-    servo.Initialize(ServoPin);
-    servo.SetAngle(LIDAR_MEA_MIN_ANG);
+void LIDAR::Initialize(int ServoPin, bool isReverse, int VL53_ID_Front, int VL53_ID_Back) {
+    this->VL53_ID_Front = VL53_ID_Front;
+    this->VL53_ID_Back = VL53_ID_Back;
+    this->CurrentAngle = LIDAR_MEA_MIN_ANG;
+    servo.Initialize(ServoPin, isReverse);
+    servo.SetAngle(CurrentAngle);
     delay(200);
-    for (int j = 0; j < 10; j++) {
-        vl53_sensors[num].UpdateDistance();
+}
+
+void LIDAR::SetState(int State) {
+    this->State = State;
+
+    if (State == LIDAR_STATE_UP) {
+        max_Distance_diff_Front = max_Distance_diff_Back = 0;
+        CharacteristicPoint_Front[0] = CharacteristicPoint_Front[1] = 0;
+        CharacteristicPoint_Back[0] = CharacteristicPoint_Back[1] = 0;
     }
 }
 
-void LidarMeasurement() {
-    for (int i = 0; i < LIDAR_NUM; i++) {
-        lidar[i].Distance = 0;
-    }
+void LIDAR::Update() {
+    switch (State) {
+        case LIDAR_STATE_IDLE:
+            break;
 
-    for (int i = 0; i < LIDAR_NUM; i++) {
-        lidar[i].max_Distance_diff = 0;
-        // lidar[i].CharacteristicPoint[0] = lidar[i].CharacteristicPoint[1] = 0;
-    }
+        case LIDAR_STATE_UP:
+            if (CurrentAngle + LIDAR_MEA_ANGLE_DIFF > LIDAR_MEA_MAX_ANG) {
+                State = LIDAR_STATE_DOWN;
+            } else {
+                CurrentAngle += LIDAR_MEA_ANGLE_DIFF;
+                servo.SetAngle(CurrentAngle);
 
-    for (int angle = LIDAR_MEA_MIN_ANG; angle < LIDAR_MEA_MAX_ANG; angle += LIDAR_MEA_ANGLE_DIFF) {
-        for (int num = 0; num < LIDAR_NUM; num++) {
-            lidar[num].servo.SetAngle(angle);
-        }
+                vl53_sensors[VL53_ID_Front].UpdateDistance();
+                vl53_sensors[VL53_ID_Back].UpdateDistance();
+                Distance_diff_Front = abs(vl53_sensors[VL53_ID_Front].distance_filtered - vl53_sensors[VL53_ID_Front].distance_filtered_pre);
+                Distance_diff_Back = abs(vl53_sensors[VL53_ID_Back].distance_filtered - vl53_sensors[VL53_ID_Back].distance_filtered_pre);
 
-        for (int j = 0; j < LIDAR_MEA_TIME; j++) {
-            for (int num = 0; num < LIDAR_NUM; num++) {
-                vl53_sensors[num].UpdateDistance();
-
-                lidar[num].Distance_diff = abs(vl53_sensors[num].distance_filtered - vl53_sensors[num].distance_filtered_pre);
-
-                if (lidar[num].Distance_diff > lidar[num].max_Distance_diff) {
-                    lidar[num].max_Distance_diff = lidar[num].Distance_diff;
-                    lidar[num].CharacteristicPoint[0] = angle;
+                if (Distance_diff_Front > max_Distance_diff_Front) {
+                    max_Distance_diff_Front = Distance_diff_Front;
+                    CharacteristicPoint_Front[0] = CurrentAngle;
                 }
-
-                // Serial.print(t);
-                // Serial.print(" ");
-                // Serial.print(angle);
-                // Serial.print(" ");
-                // Serial.print(vl53_sensors[num].GetDistance());
-                // Serial.print(" ");
-                // Serial.print(vl53_sensors[num].GetDistanceFiltered());
-                // Serial.print(" ");
-                // Serial.print(lidar[num].Distance_diff);
-
-                // Serial.print(" ");
-                // Serial.print(lidar[num].CharacteristicPoint[0]);
-                // Serial.print(" ");
-                // Serial.println(lidar[num].CharacteristicPoint[1]);
-            }
-        }
-        // Serial.println();
-    }
-
-    for (int i = 0; i < LIDAR_NUM; i++) {
-        lidar[i].max_Distance_diff = 0;
-    }
-
-    for (int angle = LIDAR_MEA_MAX_ANG; angle >= LIDAR_MEA_MIN_ANG; angle -= LIDAR_MEA_ANGLE_DIFF) {
-        for (int num = 0; num < LIDAR_NUM; num++) {
-            lidar[num].servo.SetAngle(angle);
-        }
-
-        for (int j = 0; j < LIDAR_MEA_TIME; j++) {
-            for (int num = 0; num < LIDAR_NUM; num++) {
-                vl53_sensors[num].UpdateDistance();
-
-                lidar[num].Distance_diff = abs(vl53_sensors[num].distance_filtered - vl53_sensors[num].distance_filtered_pre);
-
-                if (lidar[num].Distance_diff > lidar[num].max_Distance_diff) {
-                    lidar[num].max_Distance_diff = lidar[num].Distance_diff;
-                    lidar[num].CharacteristicPoint[1] = angle;
+                if (Distance_diff_Back > max_Distance_diff_Back) {
+                    max_Distance_diff_Back = Distance_diff_Back;
+                    CharacteristicPoint_Back[0] = CurrentAngle;
                 }
-
-                // Serial.print(t);
-                // Serial.print(" ");
-                // Serial.print(angle);
-                // Serial.print(" ");
-                // Serial.print(vl53_sensors[num].GetDistance());
-                // Serial.print(" ");
-                // Serial.print(vl53_sensors[num].GetDistanceFiltered());
-                // Serial.print(" ");
-                // Serial.print(lidar[num].Distance_diff);
-
-                // Serial.print(" ");
-                // Serial.print(lidar[num].CharacteristicPoint[0]);
-                // Serial.print(" ");
-                // Serial.println(lidar[num].CharacteristicPoint[1]);
             }
-        }
-        // Serial.println();
-    }
+            break;
 
-    Serial.print(lidar[0].CharacteristicPoint[0]);
-    Serial.print(" ");
-    Serial.print(lidar[0].CharacteristicPoint[1]);
-    Serial.print(" ");
-    Serial.println((lidar[0].CharacteristicPoint[0] + lidar[0].CharacteristicPoint[1]) / 2);
+        case LIDAR_STATE_DOWN:
+            if (CurrentAngle - LIDAR_MEA_ANGLE_DIFF < LIDAR_MEA_MIN_ANG) {
+                State = LIDAR_STATE_IDLE;
+                // Push the predict answer here.
+            } else {
+                CurrentAngle -= LIDAR_MEA_ANGLE_DIFF;
+                servo.SetAngle(CurrentAngle);
+
+                vl53_sensors[VL53_ID_Front].UpdateDistance();
+                vl53_sensors[VL53_ID_Back].UpdateDistance();
+                Distance_diff_Front = abs(vl53_sensors[VL53_ID_Front].distance_filtered - vl53_sensors[VL53_ID_Front].distance_filtered_pre);
+                Distance_diff_Back = abs(vl53_sensors[VL53_ID_Back].distance_filtered - vl53_sensors[VL53_ID_Back].distance_filtered_pre);
+
+                if (Distance_diff_Front > max_Distance_diff_Front) {
+                    max_Distance_diff_Front = Distance_diff_Front;
+                    CharacteristicPoint_Front[1] = CurrentAngle;
+                }
+                if (Distance_diff_Back > max_Distance_diff_Back) {
+                    max_Distance_diff_Back = Distance_diff_Back;
+                    CharacteristicPoint_Back[1] = CurrentAngle;
+                }
+            }
+            break;
+
+        default:
+            break;
+    }
 }
 
 // TODO : Use all data to predict the average car info.
@@ -133,6 +110,7 @@ LIDAR_MEASUREMENT CalulateDistance(int mea_left1, int mea_left2, int mea_right1,
 
 void LIDAR::SearchLidarTable() {
     if (num == 0) {
-        Answer_Predict = LidarTable_1[(CharacteristicPoint[0] + CharacteristicPoint[1]) / 2];
+        Answer_Predict_Front = LidarTable_1[(CharacteristicPoint_Front[0] + CharacteristicPoint_Front[1]) / 2];
+        Answer_Predict_Back = LidarTable_1[(CharacteristicPoint_Back[0] + CharacteristicPoint_Back[1]) / 2];
     }
 }

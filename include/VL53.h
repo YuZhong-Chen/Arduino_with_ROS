@@ -18,14 +18,12 @@ class VL53 {
 
     void UpdateDistance();
 
-    friend bool VL53_INIT();
+    static void Initialize();
 
    private:
     VL53L0X sensor;
     KalmanFilter kf{2, 2, 0.02};
 };
-
-bool VL53_INIT();
 
 /**
  *  ID  Use
@@ -36,6 +34,6 @@ bool VL53_INIT();
  *  4   Front left   (FrontDetect)
  *  5   Front right  (FrontDetect)
  */
-extern VL53 vl53_sensors[VL53_num];
+extern VL53 vl53_sensors[VL53_NUM];
 
 #endif
