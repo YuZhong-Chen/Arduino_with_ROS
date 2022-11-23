@@ -6,7 +6,7 @@ CARFRONT CarFrontSensor;
 
 CARFRONT::CARFRONT() {
     // FrontDetect VL53 ID
-    Initialize(4, 5);
+    Initialize(0, 1);
 }
 
 void CARFRONT::Initialize(int ID_right, int ID_left) {

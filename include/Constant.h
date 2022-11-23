@@ -16,6 +16,15 @@
 #define CAR_LENGTH 30.0
 #define TRACK_WIDTH 100.0
 
+#define FIRST_BUTTON_PIN 28
+#define SECOND_BUTTON_PIN 30
+#define THIRD_BUTTON_PIN 32
+
+#define ENABLE_VL53
+// #define ENABLE_FLOWSENSOR
+// #define ENABLE_LIDAR
+// #define ENABLE_BUTTON
+
 extern const unsigned int LidarTable_1[];
 
 #endif

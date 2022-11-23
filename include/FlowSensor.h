@@ -25,11 +25,11 @@ class FLOWSENSOR {
     double Position_Y;
 
    private:
-    // Using digital pin 10 for chip select
-    Bitcraze_PMW3901 flow{10};
+    // Using digital pin 49 for chip select
+    Bitcraze_PMW3901 flow{49};
 
-    KalmanFilter KalmanFilter_X{2, 2, 0.1};
-    KalmanFilter KalmanFilter_Y{2, 2, 0.1};
+    KalmanFilter KalmanFilter_X{2, 2, 0.2};
+    KalmanFilter KalmanFilter_Y{2, 2, 0.2};
 
     int16_t DeltaX;
     int16_t DeltaY;
@@ -37,6 +37,9 @@ class FLOWSENSOR {
     unsigned long LastTime;
     unsigned long CurrentTime;
     double DeltaTime;
+
+    int FirstNData;
+    int IgnoreFirstNData;
 };
 
 extern FLOWSENSOR FlowSensor;

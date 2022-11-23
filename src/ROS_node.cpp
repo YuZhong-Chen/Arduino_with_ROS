@@ -16,6 +16,9 @@ static ros::Publisher FlowSensor_Position_pub("/FlowSensor/Position", &FlowSenso
 geometry_msgs::Vector3 FlowSensor_Velocity_msg;
 static ros::Publisher FlowSensor_Velocity_pub("/FlowSensor/Velocity", &FlowSensor_Velocity_msg);
 
+static std_msgs::Int16 Button_msg;
+static ros::Publisher Button_pub("/Button", &Button_msg);
+
 void ROS_NODE::setup() {
     ROS_NodeHandle.initNode();
 
@@ -35,6 +38,8 @@ void ROS_NODE::setup() {
 
     ROS_NodeHandle.advertise(FlowSensor_Position_pub);
     ROS_NodeHandle.advertise(FlowSensor_Velocity_pub);
+
+    ROS_NodeHandle.advertise(Button_pub);
 }
 
 void ROS_NODE::Publish_RobotArmControl_Vel(float *Velocity) {
@@ -60,6 +65,11 @@ void ROS_NODE::Publish_FlowSensor_Pos() {
 
 void ROS_NODE::Publish_FlowSensor_Vel() {
     FlowSensor_Velocity_pub.publish(&FlowSensor_Velocity_msg);
+}
+
+void ROS_NODE::Publish_Button_State(int num) {
+    Button_msg.data = num;
+    Button_pub.publish(&Button_msg);
 }
 
 void ROS_NODE::SpinOnce() {
