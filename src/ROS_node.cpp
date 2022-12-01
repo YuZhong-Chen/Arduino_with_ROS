@@ -68,8 +68,10 @@ void ROS_NODE::Publish_FlowSensor_Vel() {
 }
 
 void ROS_NODE::Publish_Button_State(int num) {
-    Button_msg.data = num;
-    Button_pub.publish(&Button_msg);
+    for (int i = 0; i < 3; i++) {
+        Button_msg.data = num;
+        Button_pub.publish(&Button_msg);
+    }
 }
 
 void ROS_NODE::SpinOnce() {

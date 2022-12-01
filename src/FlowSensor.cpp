@@ -21,7 +21,7 @@ void FLOWSENSOR::Reset() {
 }
 
 void FLOWSENSOR::UpdateData() {
-    flow.readMotionCount(&(this->DeltaX), &(this->DeltaY));
+    flow.readMotionCount(&(this->DeltaY), &(this->DeltaX));
 
     // First measurement.
     if (FirstNData < IgnoreFirstNData) {
@@ -30,8 +30,8 @@ void FLOWSENSOR::UpdateData() {
         return;
     }
 
-    Velocity_X = KalmanFilter_X.updateEstimate(DeltaX);
-    Velocity_Y = KalmanFilter_Y.updateEstimate(DeltaY);
+    Velocity_X = KalmanFilter_X.updateEstimate((-1) * DeltaX);
+    Velocity_Y = KalmanFilter_Y.updateEstimate((-1) * DeltaY);
 
     // Velocity_X = (double)DeltaX;
     // Velocity_Y = (double)DeltaY;

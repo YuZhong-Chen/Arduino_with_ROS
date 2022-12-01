@@ -25,7 +25,7 @@ void VL53::Initialize() {
 
     // TODO  Remember to modify the pin.
     // (According to the Physic connection.)
-    int Shutdown_Pin[6] = {26, 27, 7, 8, 9, 10};
+    int Shutdown_Pin[6] = {38, 39, 7, 8, 9, 10};
 
     // Shutdown the sensor.
     for (int i = 0; i < VL53_NUM; i++) {
@@ -48,8 +48,9 @@ void VL53::Initialize() {
 
     if (!isSuccess) {
         Serial.println("Fail to Init VL53 sensors.");
-        while (1) {
-        }
+        // while (1) {
+        // }
+        return;
     }
 
     for (int i = 0; i < VL53_NUM; i++) {

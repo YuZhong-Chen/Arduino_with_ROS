@@ -23,7 +23,7 @@
 #define ENABLE_VL53
 // #define ENABLE_FLOWSENSOR
 // #define ENABLE_LIDAR
-// #define ENABLE_BUTTON
+#define ENABLE_BUTTON
 
 extern const unsigned int LidarTable_1[];
 

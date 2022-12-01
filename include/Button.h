@@ -8,9 +8,13 @@ class BUTTON {
     void Init(int Pin);
     void UpdateStatus(int Pin);
     void UpdateStatus();
+    bool isEnable();
 
-    bool Status;
     int Pin;
+
+   private:
+    bool CurrentStatus;
+    bool PreviousStatus;
 };
 
 extern BUTTON Button[3];
